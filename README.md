@@ -52,7 +52,3 @@ http://localhost:8080
 - `static/`
   - `index.html` - Chat UI
   - `client.js` - WebSocket client code
-
-## License
-
-MIT License
