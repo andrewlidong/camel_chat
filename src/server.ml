@@ -15,9 +15,10 @@ let router =
       let content = read_file "static/client.js" in
       Dream.respond ~headers:["Content-Type", "application/javascript"] content
     );
-    Dream.get "/ws" (fun _request ->
+    Dream.get "/ws" (fun request ->
+      let username = Dream.query request "username" |> Option.value ~default:"Anonymous" in
       Dream.websocket (fun websocket ->
-        Chat_room.handle_connection websocket
+        Chat_room.handle_connection websocket username
       )
     );
   ]

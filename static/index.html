@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OCaml Chat</title>
+    <title>Camel Chat 🐪</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -9,12 +9,43 @@
             margin: 0 auto;
             padding: 20px;
         }
+        #login-form {
+            margin-bottom: 20px;
+        }
+        #username-input {
+            padding: 10px;
+            margin-right: 10px;
+            width: 200px;
+        }
         #messages {
             height: 400px;
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
             overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .message .username {
+            font-weight: bold;
+        }
+        .message .timestamp {
+            color: #666;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .system-message {
+            color: #666;
+            font-style: italic;
+        }
+        #typing-indicator {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+            display: none;
         }
         #input {
             width: 100%;
@@ -24,9 +55,16 @@
     </style>
 </head>
 <body>
-    <h1>OCaml Chat</h1>
-    <div id="messages"></div>
-    <input type="text" id="input" placeholder="Type a message and press Enter...">
+    <h1>Camel Chat 🐪</h1>
+    <div id="login-form">
+        <input type="text" id="username-input" placeholder="Enter your username...">
+        <button id="login-button">Join Chat</button>
+    </div>
+    <div id="chat-container" style="display: none;">
+        <div id="messages"></div>
+        <div id="typing-indicator"></div>
+        <input type="text" id="input" placeholder="Type a message and press Enter...">
+    </div>
     <script src="/client.js"></script>
 </body>
 </html>
