@@ -1,3 +1,5 @@
+const MAX_MESSAGE_LENGTH = 500;
+
 let ws = null;
 let username = '';
 let isTyping = false;
@@ -8,6 +10,22 @@ let typingUsers = new Set();
 function formatTimestamp(timestamp) {
     const date = new Date(parseInt(timestamp) * 1000);
     return date.toLocaleTimeString();
+}
+
+// Update character counter
+function updateCharCounter(length) {
+    const counter = document.getElementById('char-counter');
+    counter.textContent = `${length} / ${MAX_MESSAGE_LENGTH}`;
+
+    // Remove previous classes
+    counter.classList.remove('warning', 'error');
+
+    // Add visual feedback based on length
+    if (length > MAX_MESSAGE_LENGTH) {
+        counter.classList.add('error');
+    } else if (length > MAX_MESSAGE_LENGTH * 0.8) {
+        counter.classList.add('warning');
+    }
 }
 
 // Update typing indicator
@@ -97,14 +115,23 @@ function setupWebSocket() {
         if (event.key === 'Enter') {
             const message = input.value.trim();
             if (message) {
+                // Check message length
+                if (message.length > MAX_MESSAGE_LENGTH) {
+                    alert(`Message too long! Maximum ${MAX_MESSAGE_LENGTH} characters allowed.`);
+                    return;
+                }
                 ws.send(message);
                 input.value = '';
+                updateCharCounter(0);
             }
         }
     });
 
-    // Handle typing indicator
+    // Handle typing indicator and character counter
     input.addEventListener('input', () => {
+        // Update character counter
+        updateCharCounter(input.value.length);
+
         if (!isTyping) {
             isTyping = true;
             // Send typing start message

@@ -1,5 +1,8 @@
 open Lwt.Infix
 
+(* Maximum message length *)
+let max_message_length = 500
+
 (* Client information type *)
 type client_info = {
   websocket: Dream.websocket;
@@ -91,14 +94,28 @@ let handle_connection client username =
               update_typing_status client false >>= fun () ->
               loop ()
           | _ ->
-              let formatted_message = format_message client_info.username client_info.color message in
-              broadcast formatted_message >>= fun () ->
-              loop ()
+              (* Check message length *)
+              if String.length message > max_message_length then
+                let error_msg = format_message "System" "#FF0000"
+                  (Printf.sprintf "Message too long! Maximum %d characters allowed." max_message_length) in
+                Dream.send client error_msg >>= fun () ->
+                loop ()
+              else
+                let formatted_message = format_message client_info.username client_info.color message in
+                broadcast formatted_message >>= fun () ->
+                loop ()
         with _ ->
           (* If JSON parsing fails, treat as regular message *)
-          let formatted_message = format_message client_info.username client_info.color message in
-          broadcast formatted_message >>= fun () ->
-          loop ())
+          (* Check message length *)
+          if String.length message > max_message_length then
+            let error_msg = format_message "System" "#FF0000"
+              (Printf.sprintf "Message too long! Maximum %d characters allowed." max_message_length) in
+            Dream.send client error_msg >>= fun () ->
+            loop ()
+          else
+            let formatted_message = format_message client_info.username client_info.color message in
+            broadcast formatted_message >>= fun () ->
+            loop ())
     | None ->
         (* Client disconnected, clean up *)
         let client_info = List.find (fun c -> c.websocket == client) !clients in
